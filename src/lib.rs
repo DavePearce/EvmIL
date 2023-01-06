@@ -8,6 +8,7 @@ mod lexer;
 mod parser;
 mod term;
 // public
+pub mod evm;
 pub mod dfa;
 pub mod util;
 

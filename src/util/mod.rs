@@ -11,6 +11,8 @@
 // limitations under the License.
 mod byte_utils;
 mod interval;
+mod int;
 
 pub use byte_utils::*;
 pub use interval::*;
+pub use int::*;
