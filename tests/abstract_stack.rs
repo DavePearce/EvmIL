@@ -1,4 +1,4 @@
-use evmil::dfa::{AbstractStack,AbstractValue,EMPTY_STACK};
+use evmil::analysis::{AbstractStack,AbstractValue,EMPTY_STACK};
 
 const ZERO : AbstractValue = AbstractValue::Known(0);
 const ONE : AbstractValue = AbstractValue::Known(1);

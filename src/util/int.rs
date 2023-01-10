@@ -1,6 +1,7 @@
 use std::fmt;
 ///
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,Debug,PartialEq)]
+#[allow(non_camel_case_types)]
 pub struct u256 {
     /// Represented in little endian notation.
     words: [u64;4]

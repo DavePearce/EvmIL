@@ -10,9 +10,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 mod byte_utils;
+mod hex;
 mod interval;
 mod int;
 
 pub use byte_utils::*;
+pub use hex::*;
 pub use interval::*;
 pub use int::*;

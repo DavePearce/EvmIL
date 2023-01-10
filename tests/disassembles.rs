@@ -1,6 +1,7 @@
-use evmil::{Instruction,FromHexString,CfaState};
-use evmil::{Disassembly};
-use evmil::Instruction::*;
+use evmil::ll::Instruction;
+use evmil::ll::Instruction::*;
+use evmil::util::FromHexString;
+use evmil::analysis::{CfaState,Disassembly};
 
 // ============================================================================
 // Instruction Tests

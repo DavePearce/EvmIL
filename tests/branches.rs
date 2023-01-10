@@ -1,4 +1,6 @@
-use evmil::{Bytecode,Parser,ToHexString};
+use evmil::il::Parser;
+use evmil::ll::Bytecode;
+use evmil::util::ToHexString;
 
 // ============================================================================
 // Goto

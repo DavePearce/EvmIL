@@ -1,7 +1,7 @@
 use std::fmt;
-use crate::{BinOp,Region,Term};
-use crate::lexer;
-use crate::lexer::{Lexer,Span,Token};
+use crate::il::{BinOp,Region,Term};
+use crate::il::lexer;
+use crate::il::{Lexer,Span,Token};
 
 /// Defines the set of tokens which are considered to identify logical
 /// connectives (e.g. `&&`, `||`, etc).

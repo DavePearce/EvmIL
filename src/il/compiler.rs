@@ -10,17 +10,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 use std::collections::HashMap;
-use crate::{BinOp,Bytecode,Instruction,Region,Term};
+use crate::il::{BinOp,Region,Term};
+use crate::ll::{Bytecode,Instruction};
 use crate::util::*;
 
-type Result = std::result::Result<(),Error>;
+type Result = std::result::Result<(),CompilerError>;
 
 // ============================================================================
 // Errors
 // ============================================================================
 
 #[derive(Debug)]
-pub enum Error {
+pub enum CompilerError {
     /// An integer (or hex) literal is too large (i.e. exceeds `2^256`).
     LiteralOverflow,
     /// Attempt to read from an invalid memory region.
@@ -78,7 +79,7 @@ impl<'a> Compiler<'a> {
             // Expressions
             Term::Binary(bop,e1,e2) => self.translate_binary(*bop,e1,e2),
             Term::ArrayAccess(src,index) => self.translate_array_access(src,index),
-            Term::MemoryAccess(_) => Err(Error::InvalidMemoryAccess),
+            Term::MemoryAccess(_) => Err(CompilerError::InvalidMemoryAccess),
             // Values
             Term::Int(bytes) => self.translate_literal(bytes,10),
             Term::Hex(bytes) => self.translate_literal(bytes,16),
@@ -112,7 +113,7 @@ impl<'a> Compiler<'a> {
                 self.translate_assignment_array(&src,&idx)?;
             }
             _ => {
-                return Err(Error::InvalidLVal);
+                return Err(CompilerError::InvalidLVal);
             }
         }
         //
@@ -125,7 +126,7 @@ impl<'a> Compiler<'a> {
                 self.translate_assignment_memory(*r,index)
             }
             _ => {
-                Err(Error::InvalidMemoryAccess)
+                Err(CompilerError::InvalidMemoryAccess)
             }
         }
     }
@@ -138,7 +139,7 @@ impl<'a> Compiler<'a> {
             Region::Memory => self.bytecode.push(Instruction::MSTORE),
             Region::Storage => self.bytecode.push(Instruction::SSTORE),
             _ => {
-                return Err(Error::InvalidMemoryAccess);
+                return Err(CompilerError::InvalidMemoryAccess);
             }
         };
         //
@@ -397,7 +398,7 @@ impl<'a> Compiler<'a> {
                 self.translate_memory_access(*r,index)
             }
             _ => {
-                Err(Error::InvalidMemoryAccess)
+                Err(CompilerError::InvalidMemoryAccess)
             }
         }
     }
@@ -433,12 +434,12 @@ impl<'a> Compiler<'a> {
 }
 
 /// Construct a push instruction from a value.
-fn make_push(val: u128) -> std::result::Result<Instruction,Error> {
+fn make_push(val: u128) -> std::result::Result<Instruction,CompilerError> {
     let bytes = to_be_bytes(val);
     // Sanity check size of literal
     if bytes.len() > 32 {
         // Too big!!
-        Err(Error::LiteralOverflow)
+        Err(CompilerError::LiteralOverflow)
     } else {
         Ok(Instruction::PUSH(bytes))
     }

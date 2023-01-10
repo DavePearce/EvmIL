@@ -1,6 +1,8 @@
-use evmil::{Bytecode,Term,ToHexString};
-use evmil::Term::*;
-use evmil::BinOp::*;
+use evmil::il::Term;
+use evmil::il::BinOp::*;
+use evmil::il::Term::*;
+use evmil::ll::Bytecode;
+use evmil::util::ToHexString;
 
 // ============================================================================
 // Expressions

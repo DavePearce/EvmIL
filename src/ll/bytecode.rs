@@ -9,11 +9,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-use crate::{Term};
-use crate::instruction;
-use crate::instruction::{Instruction,Offset};
-use crate::compiler;
-use crate::compiler::Compiler;
+use crate::il::{Term};
+use crate::il::{Compiler,CompilerError};
+use crate::ll::instruction;
+use crate::ll::{Instruction,Offset};
 
 // ============================================================================
 // Bytecode Programs
@@ -126,7 +125,7 @@ impl Bytecode {
 // Helpers
 // ============================================================================
 
-fn try_from(terms: &[Term]) -> Result<Bytecode,compiler::Error> {
+fn try_from(terms: &[Term]) -> Result<Bytecode,CompilerError> {
     let mut bytecode = Bytecode::new();
     let mut compiler = Compiler::new(&mut bytecode);
     // Translate statements one-by-one
@@ -144,7 +143,7 @@ fn try_from(terms: &[Term]) -> Result<Bytecode,compiler::Error> {
 /// Translate a sequence of IL statements into EVM bytecode, or fail
 /// with an error.
 impl TryFrom<&[Term]> for Bytecode {
-    type Error = compiler::Error;
+    type Error = CompilerError;
 
     fn try_from(terms: &[Term]) -> Result<Bytecode,Self::Error> {
         try_from(terms)
@@ -154,7 +153,7 @@ impl TryFrom<&[Term]> for Bytecode {
 /// Translate a sequence of IL statements into EVM bytecode, or fail
 /// with an error.
 impl<const N: usize> TryFrom<&[Term;N]> for Bytecode {
-    type Error = compiler::Error;
+    type Error = crate::il::CompilerError;
 
     fn try_from(terms: &[Term;N]) -> Result<Bytecode,Self::Error> {
         try_from(terms)

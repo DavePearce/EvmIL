@@ -283,7 +283,7 @@ impl Lexer {
 
 #[cfg(test)]
 mod tests {
-    use crate::lexer::{Lexer,Token};
+    use crate::il::{Lexer,Token};
 
     /// Handy definition
     macro_rules! assert_ok {

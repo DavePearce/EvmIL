@@ -8,8 +8,10 @@ use log4rs::append::console::ConsoleAppender;
 use log4rs::config::{Appender, Config, Root};
 use log4rs::encode::pattern::{PatternEncoder};
 //
-use evmil::{Bytecode,Parser,ToHexString};
-use evmil::{FromHexString,Disassembly,CfaState,Instruction,AbstractState};
+use evmil::ll::{Bytecode,Instruction};
+use evmil::il::Parser;
+use evmil::util::{FromHexString,ToHexString};
+use evmil::analysis::{AbstractState,CfaState,Disassembly};
 
 fn main() -> Result<(),Box<dyn Error>> {
     // Parse command-line arguments

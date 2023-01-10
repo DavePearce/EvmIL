@@ -41,7 +41,7 @@ impl AbstractValue {
 
     pub fn is_known(&self) -> bool {
         match self {
-            AbstractValue::Known(n) => true,
+            AbstractValue::Known(_) => true,
             AbstractValue::Unknown => false
         }
     }

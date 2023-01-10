@@ -10,8 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 use std::fmt;
-use crate::{Instruction,Instruction::*};
-use crate::dfa::AbstractValue;
+use crate::ll::{Instruction,Instruction::*};
+use crate::analysis::AbstractValue;
 
 // ============================================================================
 // Disassembly

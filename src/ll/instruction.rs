@@ -1,5 +1,5 @@
 use std::fmt;
-use crate::hex::ToHexString;
+use crate::util::ToHexString;
 
 // ============================================================================
 // Label Offsets

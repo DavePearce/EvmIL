@@ -1,21 +1,34 @@
-pub mod concrete;
+mod concrete;
 pub mod opcode;
 
+pub use crate::evm::concrete::*;
+
 use std::marker::PhantomData;
-use crate::evm::opcode::*;
 use crate::util::u256;
 
+
 /// Represents the fundamental unit of computation within the EVM,
-/// namely a word.
-pub trait Word : Sized + Copy + From<u256> + std::ops::Add<Output=Self> {
+/// namely a word.  This is intentially left abstract, so that it
+/// could be reused across both _concrete_ and _abstract_ semantics.
+pub trait Word : Sized +
+    Copy +
+    From<u256> +
+    PartialEq +
+    std::ops::Add<Output=Self> {
 
 }
 
 /// Default implementation for `u256`
 impl Word for u256 { }
 
-/// Represents the EVM stack.
-pub trait Stack<T:Word> : Default {
+// ===================================================================
+// Stack
+// ===================================================================
+
+/// Represents an EVM stack of some form.  This could a _concrete_
+/// stack (i.e. useful for execution) or an _abstract_ stack
+/// (i.e. useful for analysis).
+pub trait Stack<T:Word> : Default+PartialEq {
     /// Peek `nth` item from stack (where `n==0` is top element).
     fn peek(&self, n:usize) -> T;
 
@@ -29,6 +42,14 @@ pub trait Stack<T:Word> : Default {
     fn pop(&mut self, n: usize);
 }
 
+// ===================================================================
+// EVM
+// ===================================================================
+
+/// Represents an EVM of some form.  This could be a _concrete_ EVM
+/// (i.e. useful for actually executing bytecodes), or an _abstract_
+/// EVM (i.e. useful for some kind of dataflow analysis).
+#[derive(Debug,PartialEq)]
 pub struct Evm<'a,W:Word,S:Stack<W>> {
     // This is needed for some reason.
     phantom: PhantomData<W>,
@@ -67,47 +88,14 @@ where S:Stack<W> {
         self.pc = self.pc + n;
         self
     }
+}
 
-    /// Execute the contract to completion.
-    pub fn run(mut self) {
-        // Eventually, this needs a return type.
-        loop {
-            match self.step() {
-                None => { return; }
-                Some(evm) => {
-                    self = evm;
-                }
-            }
-        }
-    }
+/// A stepper is a trait for describing a single execution step of the
+/// EVM.  This is subtle because it can be abstract or concrete.
+pub trait Stepable {
+    type Result;
 
-    /// Execute instruction at the current `pc`.
-    pub fn step(mut self) -> Option<Self> {
-        let opcode = self.code[self.pc];
-        //
-        match opcode {
-            STOP => None,
-            //
-            ADD => {
-                let lhs = self.stack.peek(1);
-                let rhs = self.stack.peek(0);
-                Some(self.pop(2).push(lhs + rhs).next(1))
-            }
-            PUSH1..=PUSH32 => {
-                // Determine push size
-                let n = ((opcode - PUSH1) + 1) as usize;
-                let pc = self.pc+1;
-                // Extract bytes
-                let bytes = &self.code[pc .. pc+n];
-                // Convert bytes into u256 word
-                let w : u256 = bytes.into();
-                // Done
-                Some(self.push(w.into()).next(n+1))
-            }
-            //
-            _ => {
-                panic!("unknown instruction encountered");
-            }
-        }
-    }
+    /// Take a single step of the EVM producing a result of some kind
+    /// (e.g. an updated EVM state).
+    fn step(self) -> Self::Result;
 }

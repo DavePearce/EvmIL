@@ -1,4 +1,6 @@
-use evmil::{Bytecode,Parser,ToHexString};
+use evmil::ll::Bytecode;
+use evmil::il::Parser;
+use evmil::util::ToHexString;
 
 // ============================================================================
 // Fail
