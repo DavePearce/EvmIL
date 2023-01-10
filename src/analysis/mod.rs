@@ -12,7 +12,9 @@
 mod cfa;
 mod disassembler;
 mod stack;
+mod word;
 
 pub use cfa::*;
 pub use disassembler::*;
 pub use stack::*;
+pub use word::*;

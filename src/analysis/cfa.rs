@@ -14,8 +14,9 @@ use crate::ll::{Instruction,Instruction::*};
 use crate::analysis::{AbstractState};
 use crate::analysis::{AbstractValue,AbstractStack,BOTTOM_STACK,EMPTY_STACK};
 use crate::util;
+use crate::util::u256;
 
-const MAX_CODE_SIZE : u128 = 24576;
+const MAX_CODE_SIZE : u256 = u256::from_u64(24576);
 const UNKNOWN : AbstractValue = AbstractValue::Unknown;
 
 // ============================================================================
@@ -175,9 +176,9 @@ impl AbstractState for CfaState {
             JUMPDEST(_) => self, // nop
             // 60 & 70s: Push Operations
             PUSH(bytes) => {
-                let n = util::from_be_bytes(&bytes);
+                let n = u256::from_be_bytes(&bytes);
                 if n <= MAX_CODE_SIZE {
-                    self.push(AbstractValue::Known(n as usize))
+                    self.push(AbstractValue::Known(n))
                 } else {
                     self.push(UNKNOWN)
                 }

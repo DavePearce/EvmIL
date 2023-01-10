@@ -10,6 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 use std::{cmp,fmt,mem};
+use crate::evm;
+use crate::analysis::{AbstractValue};
 use crate::util::{Interval,MAX_INTERVAL};
 
 /// Represents the singleton set of empty abstract stacks (which is
@@ -17,53 +19,6 @@ use crate::util::{Interval,MAX_INTERVAL};
 pub const EMPTY_STACK : AbstractStack = AbstractStack{lower: Interval::new_const(0,0), upper: Vec::new()};
 /// Bottom represents the empty set of stacks.
 pub const BOTTOM_STACK : AbstractStack = AbstractStack{lower: MAX_INTERVAL, upper: Vec::new()};
-
-// ============================================================================
-// Abstract Value
-// ============================================================================
-
-/// An abstract value is either a known constant, or an unknown
-/// (i.e. arbitrary value).
-#[derive(Clone,Copy,Debug,PartialEq)]
-pub enum AbstractValue {
-    Known(usize),
-    Unknown
-}
-
-impl AbstractValue {
-    pub fn merge(self, other: AbstractValue) -> AbstractValue {
-        if self == other {
-            self
-        } else {
-            AbstractValue::Unknown
-        }
-    }
-
-    pub fn is_known(&self) -> bool {
-        match self {
-            AbstractValue::Known(_) => true,
-            AbstractValue::Unknown => false
-        }
-    }
-
-    pub fn unwrap(&self) -> usize {
-        match self {
-            AbstractValue::Known(n) => *n,
-            AbstractValue::Unknown => {
-                panic!("unwrapping unknown value");
-            }
-        }
-    }
-}
-
-impl fmt::Display for AbstractValue {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            AbstractValue::Unknown => write!(f,"(??)"),
-            AbstractValue::Known(n) => write!(f,"({:#08x})",n)
-        }
-    }
-}
 
 // ============================================================================
 // Disassembly Context
@@ -236,6 +191,10 @@ impl AbstractStack {
         }
     }
 }
+
+// impl evm::Stack<AbstractValue> for AbstractStack {
+
+// }
 
 impl Clone for AbstractStack {
     fn clone(&self) -> Self {

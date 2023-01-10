@@ -1,9 +1,10 @@
 use evmil::analysis::{AbstractStack,AbstractValue,EMPTY_STACK};
+use evmil::util::u256;
 
-const ZERO : AbstractValue = AbstractValue::Known(0);
-const ONE : AbstractValue = AbstractValue::Known(1);
-const TWO : AbstractValue = AbstractValue::Known(2);
-const THREE : AbstractValue = AbstractValue::Known(3);
+const ZERO : AbstractValue = AbstractValue::Known(u256::from_u64(0));
+const ONE : AbstractValue = AbstractValue::Known(u256::from_u64(1));
+const TWO : AbstractValue = AbstractValue::Known(u256::from_u64(2));
+const THREE : AbstractValue = AbstractValue::Known(u256::from_u64(3));
 const UNKNOWN : AbstractValue = AbstractValue::Unknown;
 
 #[test]
